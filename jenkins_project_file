@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Code') {
+            steps {
+               git branch: 'main', url: 'https://github.com/Naga123swetha/nodejs-app.git'
+            }
+        }
+        stage('Build'){
+            steps{
+            sh 'docker build -t image1 .'
+        }}
+        stage('Push'){
+            steps{
+            script{
+            withDockerRegistry(credentialsId: 'dockercred') {
+            sh 'docker tag image1 swethareddy29/myrepo:v2'
+           sh 'docker push swethareddy29/myrepo:v2'
+}}}
+        }
+        stage('deploy'){
+           steps
+            {
+                sh 'docker run -itd --name cont1 -p 1122:80 swethareddy29/myrepo:v2'
+            }
+        }
+    
+    }
+}
